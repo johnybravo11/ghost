@@ -12,7 +12,6 @@ Ghost 目由非盈利性组织 **Ghost Foundation** 和一群优秀的独立[贡
 - [技术支持（英文）](http://support.ghost.org/) & [问答社区（中文）](http://wenda.ghostchina.com/)
 - [主题文档](http://themes.ghost.org)
 - [贡献指南](https://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md)
-- [心愿列表](http://ideas.ghost.org/)
 - [技术博客](http://dev.ghost.org)
 
 **注意：如果你在使用 Ghost 过程中遇到难题需要帮助，请尽量加入 [Slack 社区](https://ghost.org/slack/) 寻求帮助而不是在 Github 上新开一个 issue。**
@@ -135,3 +134,5 @@ Copyright (c) 2013-2015 Ghost Foundation - Released under the [MIT license](LICE
 # 中文版本及插件
 
 Copyright (c) 2013-2015 Ghost 中国/中文网 - 采用 `MIT 许可协议` 发布。
+
+
