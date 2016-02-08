@@ -7,103 +7,62 @@
 
 Ghost 目由非盈利性组织 **Ghost Foundation** 和一群优秀的独立[贡献者](https://github.com/TryGhost/Ghost/contributors)共同维护。我们正在尽最大努力让在线内容创作变得更好。
 
-- [Ghost 官网（英文）](https://ghost.org) & [Ghost 中国](http://www.ghostchina.com/)
-- [最新版本（英文）](https://ghost.org/download/) & [最新版本（中文）](http://www.ghostchina.com/download/)
-- [技术支持（英文）](http://support.ghost.org/) & [问答社区（中文）](http://wenda.ghostchina.com/)
-- [主题文档](http://themes.ghost.org)
-- [贡献指南](https://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md)
-- [技术博客](http://dev.ghost.org)
-
-**注意：如果你在使用 Ghost 过程中遇到难题需要帮助，请尽量加入 [Slack 社区](https://ghost.org/slack/) 寻求帮助而不是在 Github 上新开一个 issue。**
-
-
-# 快速安装
+# 快速部署，完整安装包
 
 安装前请确保已经安装了 Node.js - 我们建议使用 **Node v0.10.x** 的最新版本。
 
 Ghost 同时也支持 **Node v0.12** 和 **io.js v1.2** ，但是请注意，这些版本很有可能导致安装失败。如果遇到问题，请到[论坛](https://ghost.org/forum/installation/)寻求帮助。
 
-1. 下载 [最新版本](https://ghost.org/download/) 的 Ghost
-1. 解压文件至你所希望的安装位置
-1. 启动一个命令行窗口
-1. 执行 `npm install --production` 命令
-1. 启动 Ghost
-    - 本地环境：`npm start`
-    - 生产环境：`npm start --production`
-1. 启动浏览器，打开 `http://localhost:2368/ghost` 链接
+1. 在你的服务器端希望的位置 git clone https://github.com/sasuke6/ghost
+1. 使用Upstart守护Ghost，极力推荐此种方式，使用foerver进程有时会使服务器CPU使用率过高，而且也不用担心服务器宕机造成Ghost停止
+  
+   >Upstart is an event-based replacement for the /sbin/init daemon which handles starting of tasks and services during boot, stopping them during shutdown and supervising them while the system is running.
+   
+首先进入`etc/init`，然后执行以下指令：
+   
+    nano ghost.conf
 
-还可以参考详细的[安装指南](http://support.ghost.org/installation/) 。
+然后复制/粘贴以下配置信息：
 
-# 安装中文版
+	description "Ghost Blogging Platform"  
+	author      "www.hsuchihyung.cn"  
+	start on runlevel [2345]  
+	stop on shutdown
 
-Node.js 是必须的，同样也是建议使用  **Node v0.10.x** 的最新版本。如果你使用的是 **Node v0.12** 或 **io.js v1.2** 版本，请小心！遇到问题可以到 [问答社区](http://wenda.ghostchina.com/) 讨论。
+	respawn  
+	respawn limit 99 5
 
-1. 下载[最新的 Ghost 中文版](http://www.ghostchina.com/download/) 。建议下载**集成安装包**，大概20M左右。
-1. 解压所有文件到你所希望的安装目录
-1. 启动一个命令行窗口
-1. 如果你下载的不是**集成安装包**（也就是没有 `node_modules` 目录），清闲执行 `npm install --production` 命令
-1. 启动 Ghost
-    - 本地环境：`npm start`
-    - 生产环境：`npm start --production`
-1. 启动浏览器，打开 `http://localhost:2368/ghost` 链接
+	script  
+       cd /your/ghost/folder
+       npm start --production 2>&1 >> /dev/null
+	end script  
 
-<a name="getting-started"></a>
-# 开发者(从 git 下载 Ghost)
+*  `description`描述信息
+*  `npm start --production 2>&1 >> /dev/null`启动 Ghost，并将 stdout 和 stderr 中输出的信息全部丢弃。`/dev/null`就像一个黑洞，任何写入的内容都将消失。这里我们的用意是不记录任何日志。
 
-安装 Node.js。
+保存上述文件。然后启动Ghost：
+	
+	sudo start ghost
+	
+你会看到类似下面的输出信息：
+	
+	ghost start/running, process 11290
+	
+`11290`是进程ID，每次运行可能会不同。但是，看到这条消息就说明Ghost正常启动了。
 
-```bash
-# Node v0.10.x - 推荐
-# Node v0.12.x 与 io.js v1.2 - 部分支持
-#
-# 自行斟酌吧
-```
+##其他指令
+关闭Upstart服务的指令为：
 
-克隆 :ghost:
+	sudo stop ghost
+	
+重启Upstart服务的指令为：
 
-```bash
-git clone git://github.com/tryghost/ghost.git
-cd ghost
-```
-
-安装 grunt。
-
-```bash
-npm install -g grunt-cli
-```
-
-安装 Ghost。 如果你是在本地环境运行 ghost，可以使用 [master](https://github.com/TryGhost/Ghost/tree/master) 分支。如果是在生产环境运行，请使用 [stable](https://github.com/TryGhost/Ghost/tree/stable) 分支。 :no_entry_sign::rocket::microscope:
-
-```bash
-npm install
-```
-
-编译！
-
-```bash
-grunt init
-```
-
-为生产环境压缩各种文件。
-
-```bash
-grunt prod
-```
-
-启动博客。
-
-```bash
-npm start
-
-##  让 Ghost 在生产环境中运行请添加 --production 参数
-```
-
-祝贺你，一切搞定了！顺便说一下，你还可以直接执行 `npm install ghost` 指令将 Ghost 作为 npm 包来使用。[将 Ghost 作为 NPM 模块来使用](https://github.com/TryGhost/Ghost/wiki/Using-Ghost-as-an-npm-module) 是一份很详尽的文档。
-
-还可以参考更详细的[安装指南](http://support.ghost.org/installation/) 。
+	sudo restart ghost
+	
+最后，不用`npm install --production`和`npm start --production`,已经集成Ghost依赖包，可以直接启动使用，打开你的域名即可。
 
 
-# 部署 Ghost
+# 其他方式部署 Ghost
 
 ![Ghost(Pro) + DigitalOcean](https://cloud.githubusercontent.com/assets/120485/8180331/d6674e32-1414-11e5-8ce4-2250e9994906.png)
 
@@ -112,8 +71,6 @@ Ghost 官方支持的 **[Ghost(Pro)](https://ghost.org/pricing/)** 服务能够�
 从 **Ghost(Pro)** 所获得的所有收益都将用于 Ghost 基金 -- 一个非营利性的组织，为 Ghost 的开发和维护提供支持。
 
 如果你希望自己部署 Ghost，可以参考[这里](http://support.ghost.org/deploying-ghost/) 。
-
-如果你使用的是**阿里云主机**，还可以参考我们撰写的[系列文章](http://www.ghostchina.com/tag/aliyun-ecs/)，按照文中指引一步步安装 Ghost 以及依赖的各个组件。
 
 
 # 保持更新
@@ -124,15 +81,16 @@ Ghost 官方支持的 **[Ghost(Pro)](https://ghost.org/pricing/)** 服务能够�
 
 每次有新版本都会在 [技术博客](http://dev.ghost.org/tag/releases/) 上公布。你可以通过邮件订阅或者在 Twitter 上关注 [@TryGhost_Dev](https://twitter.com/tryghost_dev)。
 
-:saxophone::turtle:
-
-
 # 版权 & 协议
 
-Copyright (c) 2013-2015 Ghost Foundation - Released under the [MIT license](LICENSE).
+Copyright (c) 2013-2016 Ghost Foundation - Released under the [MIT license](LICENSE).
 
 # 中文版本及插件
 
-Copyright (c) 2013-2015 Ghost 中国/中文网 - 采用 `MIT 许可协议` 发布。
+Copyright (c) 2013-2016 Ghost 中国/中文网 - 采用 `MIT 许可协议` 发布。
+
+#感谢
+
+感谢Ghostchina和其他开发者的无私分享。
 
 
